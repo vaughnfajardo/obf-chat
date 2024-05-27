@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import streamlit as st
+import time
 
 pinecone_api_key = st.secrets["PINECONE_API_KEY"]
 openai_api_key = st.secrets["OPENAI_API_KEY"]
@@ -43,6 +44,12 @@ def process_input(user_input):
         response = generate_response(user_input)
         return response
 
+def stream_input(text):
+    for word in text.split(" "):
+        yield word + " "
+        time.sleep(0.02)
+
+
 def main():
     st.set_page_config(page_title="OBFchat", page_icon="💙")
     st.title("OBFchat 💙")
@@ -58,7 +65,8 @@ def main():
             st.markdown(user_input)
 
         with st.chat_message("assistant"):
-            response = st.write_stream(process_input(user_input))
+            answer = process_input(user_input)
+            response = st.write_stream(stream_input(answer))
 
         st.session_state.messages.append({"role": "assistant", "content": response})
 
