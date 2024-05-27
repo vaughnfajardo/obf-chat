@@ -53,14 +53,16 @@ def process_input(user_input):
             user_input += "."
         response = generate_response(user_input)
         # Append user and assistant responses to chat history
-        st.session_state.messages.append({"role": "You", "content": user_input})
-        st.session_state.messages.append({"role": "OBFchat", "content": response})
-        # Force a rerun to update the UI
-        st.experimental_rerun()
+
+        with st.chat_message("OBFchat"):
+            st.write(response)
+
 
 # User input interface
-user_input = st.text_input("Ask a question:", key="user_input")
+user_input = st.chat_input("Ask a question:", key="user_input")
 
 if st.button('Send'):
     process_input(user_input)
     st.session_state.user_input = ""  # Clear input after processing
+    with st.chat_message("You"):
+        st.write(user_input)
