@@ -23,6 +23,9 @@ index = PineconeVectorStore(index_name=index_name, embedding=embeddings)
 llm = ChatOpenAI(api_key=openai_api_key, model_name="gpt-4o", temperature=0.4)
 chain=load_qa_chain(llm,chain_type="stuff")
 
+if 'conversation' not in st.session_state:
+    st.session_state['conversation'] = []
+
 def retrieve_query(query, k=10):
     matching_results = index.similarity_search(query, k=k)
     return matching_results
@@ -46,6 +49,7 @@ def process_input(user_input):
         response = generate_response(user_input)
         st.session_state.conversation.append(f"You: {user_input}")
         st.session_state.conversation.append(f"OBFchat: {response}")
+        st.experimental_rerun()
 
 # Streamlit UI setup
 st.set_page_config(page_title="OBFchat", page_icon="💙")
