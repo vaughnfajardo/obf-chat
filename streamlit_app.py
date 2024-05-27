@@ -55,9 +55,9 @@ def process_input(user_input):
 st.set_page_config(page_title="OBFchat", page_icon="💙")
 st.title("OBFchat 💙")
 
-# Display the conversation
-for line in st.session_state.conversation:
-    st.text(line)
+for author, line in st.session_state.conversation:
+    with st.chat_message(author if author == "You" else "assistant"):
+        st.write(line)
 
 # Input and button for new messages
 user_input = st.text_input("Ask a question:", key="user_input", on_change=None)
