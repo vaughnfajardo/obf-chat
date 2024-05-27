@@ -38,6 +38,15 @@ def generate_response(text):
     answer = retrieve_answers(text)
     return answer
 
+# Function to simulate conversational response
+def process_input(user_input):
+    if user_input:
+        if user_input[-1].isalpha():
+            user_input += "."
+        response = generate_response(user_input)
+        st.session_state.conversation.append(f"You: {user_input}")
+        st.session_state.conversation.append(f"OBFchat: {response}")
+
 # Streamlit UI setup
 st.set_page_config(page_title="OBFchat", page_icon="💙")
 st.title("OBFchat 💙")
