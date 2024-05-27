@@ -30,10 +30,8 @@ if "messages" not in st.session_state:
 st.set_page_config(page_title="OBFchat", page_icon="💙")
 st.title("OBFchat 💙")
 
-# Display chat messages from history
-for message in st.session_state.messages:
-    with st.container():
-        st.write(f"{message['role']}: {message['content']}")
+def retrieve_query(query, k=10):
+    return index.similarity_search(query, k=k)
 
 def generate_response(text):
     if text[-1].isalpha():  # Ensure text ends with a period
@@ -42,27 +40,13 @@ def generate_response(text):
     response = chain.run(input_documents=query_results, question=text)
     return response
 
-def retrieve_query(query, k=10):
-    return index.similarity_search(query, k=k)
-
-# Process user input and update UI
 def process_input(user_input):
-    if user_input:
-        # Ensure user_input ends with a period for consistency in processing
         if user_input[-1].isalpha():
             user_input += "."
         response = generate_response(user_input)
-        # Append user and assistant responses to chat history
-
-        with st.chat_message("OBFchat"):
-            st.write(response)
-
+        return response
 
 # User input interface
-user_input = st.chat_input("Ask a question:", key="user_input")
-
-if st.button('Send'):
-    process_input(user_input)
-    st.session_state.user_input = ""  # Clear input after processing
-    with st.chat_message("You"):
-        st.write(user_input)
+if user_input := st.chat_input("Ask a question:", key="user_input"):
+    st.chat_message("user").write(user_input)
+    st.chat_message("assistant").write(f"Echo: {process_input(user_input)}")
