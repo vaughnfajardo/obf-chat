@@ -20,7 +20,7 @@ from langchain_pinecone import PineconeVectorStore
 index_name = "obfchat"
 index = PineconeVectorStore(index_name=index_name, embedding=embeddings)
 
-llm = ChatOpenAI(api_key=openai_api_key, model_name="gpt-3.5-turbo-0125", temperature=0.5)
+llm = ChatOpenAI(api_key=openai_api_key, model_name="gpt-4o", temperature=0.4)
 chain=load_qa_chain(llm,chain_type="stuff")
 
 def retrieve_query(query, k=10):
