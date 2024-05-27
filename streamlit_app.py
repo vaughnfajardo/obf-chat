@@ -44,15 +44,6 @@ def process_input(user_input):
         response = generate_response(user_input)
         return response
 
-def typewriter(text: str, speed: int):
-    tokens = text.split()
-    container = st.empty()  # Create an empty container to hold the text
-    for index in range(len(tokens) + 1):
-        curr_full_text = " ".join(tokens[:index])
-        container.markdown(curr_full_text)
-        time.sleep(1 / speed)  # Controls the speed of the typewriter effect
-
-
 def main():
     st.set_page_config(page_title="OBFchat", page_icon="💙")
     st.title("OBFchat 💙")
@@ -69,7 +60,7 @@ def main():
 
         with st.chat_message("assistant"):
             response = process_input(user_input)
-            typewriter(response, 100)
+            st.write(response)
 
         st.session_state.messages.append({"role": "assistant", "content": response})
 
