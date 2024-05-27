@@ -38,10 +38,20 @@ def generate_response(text):
     answer = retrieve_answers(text)
     return answer
 
+# Streamlit UI setup
 st.set_page_config(page_title="OBFchat", page_icon="💙")
 st.title("OBFchat 💙")
-user_input = st.text_input("Ask a question:")
-if st.button('Send'):
-    response = generate_response(user_input)
-    st.write(response)
 
+# Conversation display area
+for line in st.session_state.conversation:
+    st.text(line)
+
+# Input and button for new messages
+user_input = st.text_input("Ask a question:", key="user_input", on_change=None)
+
+if st.button('Send') or st.session_state.user_input:
+    process_input(st.session_state.user_input)
+    st.session_state.user_input = ""  # Clear input after processing
+
+# This ensures that after sending a message, the input box is focused again
+st.script_request_queue.enqueue('focus', widget_id="user_input")
