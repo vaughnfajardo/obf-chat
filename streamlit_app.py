@@ -65,8 +65,8 @@ def main():
             st.markdown(user_input)
 
         with st.chat_message("assistant"):
-            answer = process_input(user_input)
-            response = st.write_stream(stream_input(answer))
+            response = process_input(user_input)
+            st.write_stream(stream_input(response))
 
         st.session_state.messages.append({"role": "assistant", "content": response})
 
