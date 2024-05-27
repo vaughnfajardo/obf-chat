@@ -27,9 +27,6 @@ chain=load_qa_chain(llm,chain_type="stuff")
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-st.set_page_config(page_title="OBFchat", page_icon="💙")
-st.title("OBFchat 💙")
-
 def retrieve_query(query, k=10):
     return index.similarity_search(query, k=k)
 
@@ -46,7 +43,24 @@ def process_input(user_input):
         response = generate_response(user_input)
         return response
 
-# User input interface
-if user_input := st.chat_input("Ask a question:", key="user_input"):
-    st.chat_message("user").write(user_input)
-    st.chat_message("assistant").write(f"Echo: {process_input(user_input)}")
+def main():
+    st.set_page_config(page_title="OBFchat", page_icon="💙")
+    st.title("OBFchat 💙")
+
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+
+    if user_input := st.chat_input("Ask a question:", key="user_input"):
+        st.session_state.messages.append({"role": "user", "content": user_input})
+
+        with st.chat_message("user"):
+            st.markdown(user_input)
+
+        with st.chat_message("assistant"):
+            response = st.write_stream(process_input(user_input))
+
+        st.session_state.messages.append({"role": "assistant", "content": response})
+
+if __name__ == '__main__':
+    main()
