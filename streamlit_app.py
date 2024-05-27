@@ -55,16 +55,14 @@ def process_input(user_input):
 st.set_page_config(page_title="OBFchat", page_icon="💙")
 st.title("OBFchat 💙")
 
-# Conversation display area
+# Display the conversation
 for line in st.session_state.conversation:
     st.text(line)
 
 # Input and button for new messages
 user_input = st.text_input("Ask a question:", key="user_input", on_change=None)
 
-if st.button('Send') or st.session_state.user_input:
-    process_input(st.session_state.user_input)
+if st.button('Send'):
+    process_input(user_input)
     st.session_state.user_input = ""  # Clear input after processing
-
-# This ensures that after sending a message, the input box is focused again
-st.script_request_queue.enqueue('focus', widget_id="user_input")
+    st.experimental_rerun()
