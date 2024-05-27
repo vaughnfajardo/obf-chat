@@ -44,12 +44,6 @@ def process_input(user_input):
         response = generate_response(user_input)
         return response
 
-def stream_input(text):
-    for word in text.split(" "):
-        yield word + " "
-        time.sleep(0.02)
-
-
 def main():
     st.set_page_config(page_title="OBFchat", page_icon="💙")
     st.title("OBFchat 💙")
@@ -66,7 +60,7 @@ def main():
 
         with st.chat_message("assistant"):
             response = process_input(user_input)
-            st.write_stream(stream_input(response))
+            st.write(response)
 
         st.session_state.messages.append({"role": "assistant", "content": response})
 
