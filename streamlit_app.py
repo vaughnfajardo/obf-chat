@@ -23,39 +23,44 @@ index = PineconeVectorStore(index_name=index_name, embedding=embeddings)
 llm = ChatOpenAI(api_key=openai_api_key, model_name="gpt-4o", temperature=0.4)
 chain=load_qa_chain(llm,chain_type="stuff")
 
+# Initialize chat history if not already present
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
 st.set_page_config(page_title="OBFchat", page_icon="💙")
 st.title("OBFchat 💙")
 
+# Display chat messages from history
 for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+    with st.container():
+        st.write(f"{message['role']}: {message['content']}")
 
+def generate_response(text):
+    if text[-1].isalpha():  # Ensure text ends with a period
+        text += "."
+    query_results = retrieve_query(text)
+    response = chain.run(input_documents=query_results, question=text)
+    return response
+
+def retrieve_query(query, k=10):
+    return index.similarity_search(query, k=k)
+
+# Process user input and update UI
 def process_input(user_input):
     if user_input:
+        # Ensure user_input ends with a period for consistency in processing
         if user_input[-1].isalpha():
             user_input += "."
         response = generate_response(user_input)
-        st.session_state.conversation.append(f"You: {user_input}")
-        st.session_state.conversation.append(f"OBFchat: {response}")
+        # Append user and assistant responses to chat history
+        st.session_state.messages.append({"role": "You", "content": user_input})
+        st.session_state.messages.append({"role": "OBFchat", "content": response})
+        # Force a rerun to update the UI
         st.experimental_rerun()
-        
-def retrieve_query(query, k=10):
-    matching_results = index.similarity_search(query, k=k)
-    return matching_results
 
-def retrieve_answers(query):
-    doc_search = retrieve_query(query)
-    response = chain.run(input_documents=doc_search, question=query)
-    return response
+# User input interface
+user_input = st.text_input("Ask a question:", key="user_input")
 
-def generate_response(text):
-    if text[-1].isalpha():
-        text = text + "."
-    answer = retrieve_answers(text)
-    return answer
-
-if prompt := st.chat_input("Ask a question:"):
-    process_input(prompt)
+if st.button('Send'):
+    process_input(user_input)
+    st.session_state.user_input = ""  # Clear input after processing
