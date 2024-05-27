@@ -23,7 +23,7 @@ index = PineconeVectorStore(index_name=index_name, embedding=embeddings)
 llm = ChatOpenAI(api_key=openai_api_key, model_name="gpt-3.5-turbo-0125", temperature=0.5)
 chain=load_qa_chain(llm,chain_type="stuff")
 
-def retrieve_query(query, k=5):
+def retrieve_query(query, k=10):
     matching_results = index.similarity_search(query, k=k)
     return matching_results
 
@@ -38,7 +38,8 @@ def generate_response(text):
     answer = retrieve_answers(text)
     return answer
 
-st.title("Chatbot")
+st.set_page_config(page_title="OBFchat", page_icon="💙")
+st.title("OBFchat 💙")
 user_input = st.text_input("Ask a question:")
 if st.button('Send'):
     response = generate_response(user_input)
