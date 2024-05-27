@@ -69,7 +69,7 @@ def main():
 
         with st.chat_message("assistant"):
             response = process_input(user_input)
-            typewriter(response, 0.5)
+            typewriter(response, 100)
 
         st.session_state.messages.append({"role": "assistant", "content": response})
 
